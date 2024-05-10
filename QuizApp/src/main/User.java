@@ -91,56 +91,42 @@ public class User {
 		return password.equals(enteredPassword);
 	}
 
-	public void askLoginInput(Scanner scanner) {
+	public boolean askLoginInput(Scanner scanner) {
 		boolean isValidLogin = false;
 		int attempts = 0;
 		final int MAX_ATTEMPTS = 3;
 
-		do {
+		while (!isValidLogin && attempts < MAX_ATTEMPTS - 1) {
 			System.out.println("Enter your username: ");
 			String usernameInput = scanner.nextLine().toLowerCase();
 
 			if (!mapUser.containsKey(usernameInput)) {
-				System.out.println("Username does not exist. Please try again.");
-				continue; // Repeat the loop to ask for userName again
-			}
-			User user = mapUser.get(usernameInput);
-
-			System.out.println("Enter your password: ");
-			String passwordInput = scanner.nextLine();
-
-			if (!passwordInput.equals(user.getPassword())) {
-				System.out.println("Incorrect password.Please try again.");
 				attempts++;
+				if (attempts < MAX_ATTEMPTS - 1) {
+					System.out.println("Username does not exist. Please try again.");
+				} else {
+					System.out.println("Username does not exist. This is your final attempt. Exiting...");
+					return false; // Indicate login failure.
+				}
 			} else {
-				isValidLogin = true;
-				this.name = usernameInput;
-				this.password = passwordInput;
-				this.role = user.getRole();
+				User user = mapUser.get(usernameInput);
+
+				System.out.println("Enter your password: ");
+				String passwordInput = scanner.nextLine();
+
+				if (!passwordInput.equals(user.getPassword())) {
+					System.out.println("Incorrect password.Please try again.");
+					attempts++;
+				} else {
+					isValidLogin = true;
+					this.name = usernameInput;
+					this.password = passwordInput;
+					this.role = user.getRole();
+				}
 			}
-			if (attempts >= MAX_ATTEMPTS) {
-				System.out.println("Maximum login attempts exceeded.");
-				return;
-			}
-		} while (!isValidLogin);
+		}
+		return isValidLogin;
 	}
-//				System.out.println("1. Try again");
-//				System.out.println("Exit");
-//				int choice = scanner.nextInt();
-//				if (choice == 1) {
-//					askLoginInput();
-//				} else if (choice == 1) {
-//					System.out.println("Exiting...");
-//					System.exit(0);
-//				} else {
-//					System.out.println("Invalid choice Exiting...");
-//					System.exit(0);
-//				}
-//
-//				askLoginInput();
-//			}
-//		} while (!isValidLogin);
-//	}
 
 	public void askRegisterInput(Scanner scanner) {
 		System.out.println("Enter your username: ");
@@ -154,16 +140,13 @@ public class User {
 		System.out.println("Enter you password: ");
 		this.password = scanner.nextLine();
 
+		System.out.println("Enter your role: ");
+		this.role = scanner.nextLine();
+
 		if (this.name.isEmpty() || this.password.isEmpty()) {
 			System.out.println("Username or password cannot be empty.");
 			return;
 		}
-
-		System.out.println("Enter your role: ");
-		this.role = scanner.nextLine();
-
 		mapUser.put(name, this);
-
 	}
-
 }

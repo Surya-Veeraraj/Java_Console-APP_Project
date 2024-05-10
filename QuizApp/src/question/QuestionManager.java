@@ -9,7 +9,6 @@ public class QuestionManager {
 	public QuestionManager() {
 		questionBank = new ArrayList<>();
 		initializeQuestions();
-
 	}
 
 	private void initializeQuestions() {

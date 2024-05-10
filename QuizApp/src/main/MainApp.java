@@ -40,6 +40,7 @@ public class MainApp {
 	}
 
 	private static void displayMenu() {
+		System.out.println("=== Main Menu ===");
 		System.out.println("1. Login");
 		System.out.println("2. Register");
 		System.out.println("3. Exit");
@@ -63,15 +64,21 @@ public class MainApp {
 	private static void loginUser(Map<String, User> mapUser, int userId, QuestionManager questionManager,
 			Scanner scanner) {
 		User loginUser = new User(mapUser, userId);
-		loginUser.askLoginInput(scanner);
+		boolean loginSuccessful = loginUser.askLoginInput(scanner);
+
+		if (!loginSuccessful) {
+			return; // Exit the method if login failed
+		}
 		System.out.println("Successfully logged in");
 
 		if (loginUser.getRole().equalsIgnoreCase("admin")) {
 			System.out.println("Welcome to the Quiz Admin!");
 			AdminActions.performAdminActions(questionManager, scanner); // Pass scanner object
-		} else {
+		} else if (loginUser.getRole().equalsIgnoreCase("student")){ // Only allow students to play the quiz
 			StudentActions student = new StudentActions(questionManager);
 			student.takeQuiz(scanner);
+		} else {
+			System.out.println("Sorry, you are not authorized to play the quiz.");
 		}
 	}
 
